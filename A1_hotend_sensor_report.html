@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A1 Hotend Sensor Board: Reverse Engineering</title>
+<style>
+  :root{
+    --bg:#f6f5f2; --card:#ffffff; --ink:#1d1f23; --muted:#6b7079; --line:#e2e0da;
+    --accent:#0f766e; --accent2:#c2410c; --gnd:#374151; --vcc:#b91c1c; --sig:#1d4ed8;
+    --ok:#15803d; --warn:#b45309;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0f1115; --card:#171a21; --ink:#e7e9ee; --muted:#9aa1ad; --line:#2a2f3a;
+      --accent:#2dd4bf; --accent2:#fb923c; --gnd:#9ca3af; --vcc:#f87171; --sig:#60a5fa;
+      --ok:#4ade80; --warn:#fbbf24;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0f1115; --card:#171a21; --ink:#e7e9ee; --muted:#9aa1ad; --line:#2a2f3a;
+    --accent:#2dd4bf; --accent2:#fb923c; --gnd:#9ca3af; --vcc:#f87171; --sig:#60a5fa;
+    --ok:#4ade80; --warn:#fbbf24;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:0 16px}
+  header{padding:56px 0 28px;border-bottom:1px solid var(--line);margin-bottom:32px}
+  .kicker{text-transform:uppercase;letter-spacing:.14em;font-size:12px;color:var(--accent);font-weight:700}
+  h1{font-size:clamp(28px,5vw,42px);line-height:1.15;margin:8px 0 12px;letter-spacing:-.02em}
+  .lede{font-size:18px;color:var(--muted);max-width:720px;margin:0}
+  nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  nav a{font-size:13px;color:var(--ink);text-decoration:none;border:1px solid var(--line);
+    padding:6px 12px;border-radius:999px;background:var(--card)}
+  nav a:hover{border-color:var(--accent);color:var(--accent)}
+  section{margin:0 0 36px}
+  h2{font-size:24px;margin:0 0 12px;letter-spacing:-.01em}
+  h3{font-size:17px;margin:20px 0 8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+  p{margin:0 0 12px}
+  .muted{color:var(--muted)}
+  .grid2{display:grid;gap:16px;grid-template-columns:1fr 1fr}
+  @media (max-width:720px){.grid2{grid-template-columns:1fr}}
+  figure{margin:0}
+  figure img{width:100%;border-radius:12px;border:1px solid var(--line);display:block}
+  figcaption{font-size:13px;color:var(--muted);margin-top:8px}
+  .timeline{position:relative;padding-left:26px;margin:0}
+  .timeline:before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--line)}
+  .timeline li{list-style:none;position:relative;margin:0 0 18px}
+  .timeline li:before{content:"";position:absolute;left:-24px;top:7px;width:12px;height:12px;border-radius:50%;
+    background:var(--accent);box-shadow:0 0 0 4px var(--bg)}
+  .timeline b{display:block}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0 4px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+  td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;border:1px solid}
+  .t-gnd{color:var(--gnd);border-color:var(--gnd)}
+  .t-sig{color:var(--sig);border-color:var(--sig)}
+  .t-nc{color:var(--muted);border-color:var(--line)}
+  .t-vcc{color:var(--vcc);border-color:var(--vcc)}
+  .callout{border-left:4px solid var(--warn);background:var(--card);padding:14px 18px;border-radius:10px;margin:14px 0}
+  .callout.ok{border-color:var(--ok)}
+  .callout b{color:var(--warn)}
+  .callout.ok b{color:var(--ok)}
+  .bar{position:relative;height:14px;border-radius:999px;background:linear-gradient(90deg,var(--sig),var(--line) 50%,var(--accent2));margin:10px 0 4px}
+  .bar i{position:absolute;top:-5px;width:4px;height:24px;background:var(--ink);border-radius:2px;transform:translateX(-2px)}
+  .scale{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+  code{font:13px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--line);padding:1px 6px;border-radius:5px}
+  pre{font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--line);padding:14px;border-radius:10px;overflow-x:auto;margin:10px 0}
+  svg text{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .svgwrap{overflow-x:auto}
+  .svgwrap svg{min-width:640px;width:100%;height:auto;display:block}
+  footer{color:var(--muted);font-size:13px;padding:28px 0 56px;border-top:1px solid var(--line);margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Reverse engineering · Bambu Lab A1 hotend</div>
+  <h1>Decoding the A1 hotend sensor board</h1>
+  <p class="lede">How an 8-pin flat cable, three Hall-effect sensors and a multimeter turned into a working map of filament presence, cutter position and filament tangling.</p>
+  <nav>
+    <a href="#story">Story</a>
+    <a href="#photos">Photos</a>
+    <a href="#schematic">Schematic</a>
+    <a href="#pinout">Pinout</a>
+    <a href="#measurements">Measurements</a>
+    <a href="#behaviour">Behaviour</a>
+    <a href="#datasheet">Sensor datasheet</a>
+    <a href="#open">Open points</a>
+  </nav>
+</header>
+
+<section id="story">
+  <h2>The story</h2>
+  <div class="card">
+    <p>The A1 hotend assembly carries a small sensor board on a flat cable. Three magnetic sensors sit on it, and each one reads a magnet attached to a moving part of the filament path. The goal was to understand what the printer sees, so the sensors could be read directly, outside the printer's firmware.</p>
+    <ol class="timeline">
+      <li><b>Identify the connector</b>The board's 8-pin, 0.5&nbsp;mm pitch flat cable was connected to a home-made FPC-8P 0.5&nbsp;mm breakout board with 2.54&nbsp;mm header pins, so the signals could be probed with ordinary test leads.</li>
+      <li><b>Identify the chips</b>The chip markings were read with a magnifier glass. The marking reads <code>9105</code>, which identifies the Hall sensors as Magntek <code>MT9105</code> (MT910X family, ratiometric linear, analog output). The datasheet pin configuration then mapped the pins to their functions.</li>
+      <li><b>Confirm the supply</b>Pins 7 and 8 were confirmed as VCC.</li>
+      <li><b>Mount and measure</b>The sensor board was refitted into the hotend assembly, so the magnets sit in their real positions. The supply was 3.3&nbsp;V. Output voltages were logged for each state: no filament, filament inserted, cutter at rest and cutter pressed, and tangle released and compressed.</li>
+      <li><b>Interpret</b>The presence and cutter outputs behave as switches: they flip hard at a defined position. The tangle output varies linearly with the rate of compression of the buffer, so it can be read as an analog signal.</li>
+    </ol>
+    <p class="muted">Note on the cable: the flat cable is printed <code>N1_EXTRU_SW_FPC_V8</code>, consistent with an extruder switch assembly.</p>
+  </div>
+</section>
+
+<section id="photos">
+  <h2>Bench photos</h2>
+  <div class="grid2">
+    <figure>
+      <img src="20261105_201308_preview.jpeg" alt="FPC-8P breakout board connected to the sensor flat cable, with multimeter probes" loading="lazy">
+      <figcaption>Breakout board (FPC-8P 0.5&nbsp;mm) on the sensor flat cable, multimeter probes on the cable.</figcaption>
+    </figure>
+    <figure>
+      <img src="20261105_203743_preview.jpeg" alt="Sensor board mounted in the hotend assembly with clamp meter showing 0.088 V" loading="lazy">
+      <figcaption>Sensor board fitted in the hotend assembly. Clamp meter shows 0.088&nbsp;V DC on one output.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="schematic">
+  <h2>Schematic</h2>
+  <div class="card">
+    <p class="muted">Signal map as measured. This shows the mapping, not a traced netlist.</p>
+    <div class="svgwrap">
+    <svg viewBox="0 0 900 430" role="img" aria-label="Schematic: 8-pin FPC connector to three Hall sensors">
+      <!-- connector -->
+      <rect x="60" y="40" width="200" height="350" rx="10" fill="none" stroke="currentColor" stroke-width="2" opacity=".5"/>
+      <text x="160" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">Sensor flat cable · 8-pin 0.5 mm</text>
+      <g font-size="13" fill="currentColor">
+        <circle cx="236" cy="70" r="5" fill="#374151"/><text x="180" y="75">1</text>
+        <circle cx="236" cy="110" r="5" fill="#374151"/><text x="180" y="115">2</text>
+        <circle cx="236" cy="150" r="5" fill="#1d4ed8"/><text x="180" y="155">3</text>
+        <circle cx="236" cy="190" r="5" fill="#1d4ed8"/><text x="180" y="195">4</text>
+        <circle cx="236" cy="230" r="5" fill="#9ca3af"/><text x="180" y="235">5</text>
+        <circle cx="236" cy="270" r="5" fill="#1d4ed8"/><text x="180" y="275">6</text>
+        <circle cx="236" cy="310" r="5" fill="#b91c1c"/><text x="180" y="315">7</text>
+        <circle cx="236" cy="350" r="5" fill="#b91c1c"/><text x="180" y="355">8</text>
+      </g>
+      <!-- GND bus -->
+      <path d="M236 70 H300 V110 H236" fill="none" stroke="#374151" stroke-width="2.5"/>
+      <!-- sensor 1: presence -->
+      <g>
+        <rect x="430" y="120" width="170" height="70" rx="8" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+        <text x="515" y="146" text-anchor="middle" font-weight="700" font-size="14" fill="currentColor">Filament presence</text>
+        <text x="515" y="168" text-anchor="middle" font-size="12" fill="currentColor" opacity=".7">Hall IC · MT9105</text>
+      </g>
+      <!-- sensor 2: cutter -->
+      <g>
+        <rect x="430" y="210" width="170" height="70" rx="8" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+        <text x="515" y="236" text-anchor="middle" font-weight="700" font-size="14" fill="currentColor">Filament cutter lever</text>
+        <text x="515" y="258" text-anchor="middle" font-size="12" fill="currentColor" opacity=".7">Hall IC · MT9105</text>
+      </g>
+      <!-- sensor 3: tangle -->
+      <g>
+        <rect x="430" y="300" width="170" height="70" rx="8" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+        <text x="515" y="326" text-anchor="middle" font-weight="700" font-size="14" fill="currentColor">Filament tangle</text>
+        <text x="515" y="348" text-anchor="middle" font-size="12" fill="currentColor" opacity=".7">Hall IC · MT9105</text>
+      </g>
+      <!-- signal wires -->
+      <path d="M236 150 H330 V155 H430" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+      <path d="M236 190 H350 V245 H430" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+      <path d="M236 270 H370 V335 H430" fill="none" stroke="#1d4ed8" stroke-width="2"/>
+      <!-- VCC wires -->
+      <path d="M236 310 H400 V160" fill="none" stroke="#b91c1c" stroke-width="2" stroke-dasharray="6 5"/>
+      <path d="M236 350 H400 V130" fill="none" stroke="#b91c1c" stroke-width="2" stroke-dasharray="6 5"/>
+      <!-- GND to sensors -->
+      <path d="M300 110 H620" fill="none" stroke="#374151" stroke-width="1.5" stroke-dasharray="3 4"/>
+      <!-- labels -->
+      <text x="660" y="155" font-size="13" fill="currentColor">→ Out to measurement</text>
+      <text x="660" y="245" font-size="13" fill="currentColor">→ Out to measurement</text>
+      <text x="660" y="335" font-size="13" fill="currentColor">→ Out to measurement</text>
+      <text x="300" y="98" font-size="12" fill="#374151">GND (pins 1, 2)</text>
+      <text x="262" y="306" font-size="12" fill="#b91c1c">VCC 3.3 V (pins 7, 8)</text>
+      <text x="262" y="228" font-size="12" fill="#9ca3af">Pin 5 · NC / unknown</text>
+    </svg>
+    </div>
+    <h3>Sensor internal function (from the MT910X datasheet, Fig. 5)</h3>
+    <pre>
+  VCC ──┬── Power clamp ── Regulator ── Bandgap / VREF ── OSC (chopper 780 kHz)
+        │                     │
+        │                TC-R spinning current ── Hall plates ── AMP ── Sample &amp; hold ── Drv ──┬── OUT
+  GND ──┴───────────────────────────────────────────────────────────────────────────────────────┘
+    </pre>
+</div>
+</section>
+
+<section id="pinout">
+  <h2>Pinout</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Pin</th><th>Function</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>GND</td><td><span class="tag t-gnd">GND</span></td><td>Ground, shared with pin 2</td></tr>
+        <tr><td class="num">2</td><td>GND</td><td><span class="tag t-gnd">GND</span></td><td>Ground, shared with pin 1</td></tr>
+        <tr><td class="num">3</td><td>Filament presence sense</td><td><span class="tag t-sig">OUT</span></td><td>Analog Hall output</td></tr>
+        <tr><td class="num">4</td><td>Filament cutter position</td><td><span class="tag t-sig">OUT</span></td><td>Analog Hall output</td></tr>
+        <tr><td class="num">5</td><td>Not connected / unknown</td><td><span class="tag t-nc">?</span></td><td>No function identified yet</td></tr>
+        <tr><td class="num">6</td><td>Filament tangle sense</td><td><span class="tag t-sig">OUT</span></td><td>Analog Hall output</td></tr>
+        <tr><td class="num">7</td><td>Supply (VCC)</td><td><span class="tag t-vcc">VCC</span></td><td>Confirmed, 3.3 V</td></tr>
+        <tr><td class="num">8</td><td>Supply (VCC)</td><td><span class="tag t-vcc">VCC</span></td><td>Confirmed, 3.3 V</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="measurements">
+  <h2>Measured output voltages</h2>
+  <div class="card">
+    <p class="muted">Measured at each output with the sensor installed in the hotend assembly, supply <b>VCC = 3.3 V</b>.</p>
+
+    <h3>Filament presence (pin 3)</h3>
+    <table>
+      <thead><tr><th>State</th><th>Voltage</th><th>Field (calculated)</th></tr></thead>
+      <tbody>
+        <tr><td>No filament</td><td class="num">1.10 V</td><td class="num">≈ −175 G</td></tr>
+        <tr><td>Filament inserted</td><td class="num">0.03 V</td><td class="num">≈ −514 G (outside linear range)</td></tr>
+      </tbody>
+    </table>
+    <div class="bar"><i style="left:6%"></i></div>
+    <div class="scale"><span>0 V · filament inserted</span><span>1.1 V · no filament</span></div>
+
+    <h3>Filament cutter (pin 4)</h3>
+    <table>
+      <thead><tr><th>State</th><th>Voltage</th><th>Field (calculated)</th></tr></thead>
+      <tbody>
+        <tr><td>Cutter at rest</td><td class="num">1.70 V</td><td class="num">≈ +16 G</td></tr>
+        <tr><td>Cutter lever fully depressed</td><td class="num">0.30 V</td><td class="num">≈ −429 G (edge of linear range)</td></tr>
+      </tbody>
+    </table>
+    <div class="bar"><i style="left:14%"></i></div>
+    <div class="scale"><span>0.3 V · depressed</span><span>1.7 V · rest</span></div>
+
+    <h3>Filament tangle (pin 6)</h3>
+    <table>
+      <thead><tr><th>State</th><th>Voltage</th><th>Field (calculated)</th></tr></thead>
+      <tbody>
+        <tr><td>No tangle</td><td class="num">0.10 V</td><td class="num">≈ −492 G (outside linear range)</td></tr>
+        <tr><td>Fully compressed (tangle)</td><td class="num">2.20 V</td><td class="num">≈ +175 G</td></tr>
+      </tbody>
+    </table>
+    <div class="bar"><i style="left:4%"></i></div>
+    <div class="scale"><span>0.1 V · no tangle</span><span>2.2 V · fully compressed</span></div>
+
+    <div class="callout ok">
+      <b>Direction summary</b><br>
+      Presence output falls when filament is inserted. Cutter output falls when the lever is pressed. Tangle output rises when the spring is compressed. The three signals therefore have opposite polarity, which is worth keeping in mind when reading them in code.
+    </div>
+  </div>
+</section>
+
+<section id="behaviour">
+  <h2>Observed behaviour</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Sensor</th><th>Observed behaviour</th><th>Practical reading</th></tr></thead>
+      <tbody>
+        <tr><td>Filament presence (pin 3)</td><td>Hard flip at a defined position</td><td>Digital-like: inserted / not inserted</td></tr>
+        <tr><td>Filament cutter (pin 4)</td><td>Hard flip at a defined position</td><td>Digital-like: lever pressed / at rest</td></tr>
+        <tr><td>Filament tangle (pin 6)</td><td>Varies linearly with the rate of compression of the buffer</td><td>Analog: usable as a compression signal</td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li><b>The hard flips are mechanical.</b> When filament is inserted, it pushes a lever that moves a small magnet. The magnet is either over the Hall sensor or not, so filament presence has only two real states. The cutter has a large movement path, but only the last part of that path moves the magnet over the sensor, so the cutter output changes only over that short end stretch.</li>
+      <li><b>The tangle output is linear across most of its travel.</b> Its 0.10&nbsp;V no-tangle endpoint lies below the 0.3&nbsp;V linear limit at 3.3&nbsp;V, so the calculated field is only valid between 0.3&nbsp;V and 3.0&nbsp;V.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="datasheet">
+  <h2>Sensor datasheet (MT910X, Rev 2.1)</h2>
+  <div class="card">
+    <p>The MT9105 is a ratiometric, linear Hall-effect IC with analog output, in SOT-23 (thin outline) or Flat TO-92. Its output is centred at half the supply voltage when there is no field and moves linearly with the flux density perpendicular to the top of the package.</p>
+    <table>
+      <thead><tr><th>Parameter</th><th>Value</th><th>Condition</th></tr></thead>
+      <tbody>
+        <tr><td>Supply voltage</td><td class="num">3.0 – 5.5 V</td><td>Operating range</td></tr>
+        <tr><td>Quiescent output (VOQ)</td><td class="num">2.50 V @ 5 V · 1.65 V @ 3.3 V</td><td>B = 0, TA = 25 °C</td></tr>
+        <tr><td>Sensitivity, MT9105</td><td class="num">5.00 mV/G @ 5 V<br>3.15 mV/G @ 3.3 V</td><td>Typical, TA = 25 °C</td></tr>
+        <tr><td>Linear field range, MT9105</td><td class="num">±440 G @ 5 V<br>±430 G @ 3.3 V</td><td>Typical</td></tr>
+        <tr><td>Output swing</td><td class="num">0.3 – 4.7 V @ 5 V<br>0.3 – 3.0 V @ 3.3 V</td><td>Linear region, per Fig. 2 and 3</td></tr>
+        <tr><td>Output load</td><td class="num">Rout 2 Ω typ.<br>RL ≥ 4.7 kΩ<br>CL ≤ 10 nF</td><td>IOUT ≤ ±1.5 mA</td></tr>
+        <tr><td>Response time</td><td class="num">15 µs typ.</td><td>TA = 25 °C</td></tr>
+        <tr><td>Bandwidth</td><td class="num">30 kHz typ.</td><td></td></tr>
+        <tr><td>Noise, MT9105</td><td class="num">4.88 mVRMS</td><td>TA = 25 °C</td></tr>
+        <tr><td>Operating temperature</td><td class="num">−40 °C to 150 °C</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Converting a reading to field strength</h3>
+    <p>Because the output is ratiometric, the zero-field level depends on VCC. For a reading <code>Vout</code> at supply <code>VCC</code>, the flux density is:</p>
+    <pre>B [G] = (Vout − VCC/2) / S
+
+At VCC = 3.3 V:  VCC/2 = 1.65 V,  S = 3.15 mV/G</pre>
+    <p class="muted">Example: at 3.3&nbsp;V, a reading of 0.30&nbsp;V gives (0.30 − 1.65) / 0.00315 ≈ −429&nbsp;G, the edge of the linear range. The cutter depressed reading sits there.</p>
+    <div class="callout">
+      <b>Readings outside the linear range.</b> The datasheet's linear output at 3.3&nbsp;V runs from 0.3&nbsp;V to 3.0&nbsp;V. The presence reading of 0.03&nbsp;V and the tangle reading of 0.10&nbsp;V both fall below 0.3&nbsp;V, so those sensors are saturated in those positions. They remain reliable as binary states (magnet present or absent, tangle or no tangle), but the calculated field values for those states are not a measure of distance.
+    </div>
+  </div>
+</section>
+
+<section id="open">
+  <h2>Open points</h2>
+  <div class="card">
+    <ul>
+      <li>Identify pin 5. It may be unused, or it may be a test or shield connection.</li>
+      <li>Repeat the readings at 5&nbsp;V and compare with the 3.3&nbsp;V set, to confirm the ratiometric behaviour.</li>
+      <li>Find the exact position where the presence and cutter outputs flip, and whether they show hysteresis (different thresholds going in and out).</li>
+      <li>Measure the cutter's full travel and the length of the final stretch that moves the magnet over the sensor.</li>
+      <li>Record the tangle output against a known compression to get its voltage-to-compression curve over its linear span.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  Generated from bench measurements (3.3&nbsp;V supply, chip marking read with a magnifier) and the MT910X datasheet (Magntek, Rev 2.1). The schematic shows the measured signal mapping and is not a traced netlist. Field values are calculated from the datasheet sensitivity and the VCC/2 zero point.
+</footer>
+
+</div>
+</body>
+</html>
