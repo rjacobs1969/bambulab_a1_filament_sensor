@@ -14,7 +14,7 @@ output polarity over USB, and they are stored in flash.
  │ 3 presence   ├────────►│ GPIO0 (ADC)          GPIO5 (OD) ────────┼──────►│ 3  Stop1 → PB6 │
  │ 4 cutter     ├────────►│ GPIO1 (ADC)          GPIO6 (OD) ────────┼──────►│ 2  Stop2 → PB5 │
  │ 6 tangle     ├────────►│ GPIO3 (ADC)          GPIO7 (OD) ────────┼──────►│ 1  Stop3 → PB7 │
- │ 5 NC         │         │ GPIO10/20/21 ── RGB LED (status)        │       └────────────────┘
+ │ 5 NC         │         │ GPIO9/10/20/21 ── RGB LED (status)      │       └────────────────┘
  └──────────────┘         └─────────────────────────────────────────┘        each input on the EBB:
                                                                              10k pull-up to 3.3 V,
                                                                              1k series to MCU
@@ -106,15 +106,29 @@ needed:
 
 ### Status LED (5 mm RGB, common cathode)
 
-| GPIO | Colour | Series R |
-|:---:|---|:---:|
-| 10 | red | 220 Ω |
-| 20 | green | 47 Ω |
-| 21 | blue | 47 Ω |
+The LED's legs R, K, G, B line up with four neighbouring header pins, so it
+mounts directly against the SuperMini with a resistor in each colour leg:
 
-The common cathode goes to GND. GPIO20 and GPIO21 are the UART0 pins, but they
-are free because the SuperMini logs over native USB. The firmware dims the LED
-with PWM (`bright`). Adjust the resistors if one colour dominates.
+| LED leg | GPIO | Series R | Notes |
+|:---:|:---:|:---:|---|
+| R | 9 | 220 Ω | BOOT strapping pin, drive limited to ~10 mA |
+| K (longest) | 10 | none | common cathode, driven LOW permanently at full drive strength |
+| G | 20 | 47 Ω | |
+| B | 21 | 47 Ω | |
+
+- **Why GPIO9 is safe for red.** GPIO9 must read HIGH at reset for a normal
+  boot. At reset GPIO10 isn't driven, so the cathode floats and no current flows
+  through the red LED. The firmware pulls GPIO10 LOW only after boot.
+- **The BOOT button is on GPIO9.** Pressing it while the firmware drives red
+  shorts GPIO9 to GND. The ~10 mA drive limit keeps that harmless. Holding BOOT
+  during reset still enters download mode as usual.
+- **GPIO10 sinks all three colours,** up to about 30 mA for yellow or magenta.
+  If green or blue looks dim (they have little headroom at 3.3 V), lower their
+  resistors to 22 Ω.
+- **GPIO20 and GPIO21** are the UART0 pins, but they are free because the
+  SuperMini logs over native USB.
+- The firmware dims the LED with PWM (`bright`). Adjust the resistors if one
+  colour dominates.
 
 Highest priority first:
 

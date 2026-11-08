@@ -28,7 +28,14 @@ static const uint8_t ADC_PIN[3] = {0, 1, 3};   // presence, cutter, tangle
 // To EBB42 Endstop connector (P10): GPIO5 -> pin 3 (PB6), GPIO6 -> pin 2 (PB5),
 // GPIO7 -> pin 1 (PB7)
 static const uint8_t OUT_PIN[3] = {5, 6, 7};
-static const uint8_t LED_R = 10, LED_G = 20, LED_B = 21;  // common-cathode RGB
+// Common-cathode RGB LED plugged straight across GPIO9/10/20/21: its legs
+// R K G B line up with those four header pins (resistors in the R, G, B legs).
+// The cathode sits on GPIO10, driven LOW permanently.
+// GPIO9 is the BOOT strapping pin: at reset GPIO10 floats, so no current flows
+// through the red LED and GPIO9 still reads HIGH -> normal boot. GPIO9 also has
+// the BOOT button to GND, so its drive is limited (~10 mA) in case the button
+// is pressed while the pin drives the red LED.
+static const uint8_t LED_R = 9, LED_K = 10, LED_G = 20, LED_B = 21;
 static const uint8_t LED_ONBOARD = 8;                     // blue, active low
 
 enum { CH_PRESENCE = 0, CH_CUTTER, CH_TANGLE, CH_COUNT };
@@ -467,6 +474,9 @@ void setup() {
     pinMode(OUT_PIN[ch], OUTPUT_OPEN_DRAIN);
     digitalWrite(OUT_PIN[ch], HIGH);
   }
+  pinMode(LED_K, OUTPUT);                       // LED common cathode
+  digitalWrite(LED_K, LOW);
+  gpio_set_drive_capability((gpio_num_t)LED_K, GPIO_DRIVE_CAP_3);  // sinks all 3 colours
   pinMode(LED_ONBOARD, OUTPUT);
   digitalWrite(LED_ONBOARD, HIGH);
 
@@ -481,6 +491,8 @@ void setup() {
   }
 
   sampleAll(millis(), true);
+  updateLeds(millis());  // attaches PWM to the LED pins
+  gpio_set_drive_capability((gpio_num_t)LED_R, GPIO_DRIVE_CAP_1);  // see BOOT note above
 }
 
 void loop() {

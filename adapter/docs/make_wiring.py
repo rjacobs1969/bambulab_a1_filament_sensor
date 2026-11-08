@@ -4,7 +4,7 @@
 """
 from pathlib import Path
 
-W, H = 1800, 1180
+W, H = 1800, 1040
 out = []
 add = out.append
 FONT = "DejaVu Sans, Arial, sans-serif"
@@ -169,47 +169,43 @@ for p, y in jst_y.items():
 jst_lbl = {5: "+5V", 4: "GND", 3: "PB6 · presence", 2: "PB5 · cutter", 1: "PB7 · tangle"}
 for p, y in jst_y.items():
     text(JX + 76, y + 5, jst_lbl[p], 13, "#333")
-text(JX + 26, 470, "JST-XH 5p plug", 16, anchor="middle", weight="bold")
-text(JX + 26, 490, "→ EBB42 Endstop port", 13, "#555", "middle")
-text(JX + 26, 506, "check order vs EBB silkscreen", 12, "#777", "middle")
+text(JX + 220, 320, "JST-XH 5p plug", 16, weight="bold")
+text(JX + 220, 340, "→ EBB42 Endstop port", 13, "#555")
+text(JX + 220, 356, "check order vs EBB silkscreen", 12, "#777")
 
 # ------------------------------------------------- RGB LED + resistors ------
-# legs point up; seen from the flat side so the order left->right is B G K R
-LEDX = {"B": 1060, "G": 1094, "K": 1128, "R": 1162}
-LEG_TOP, LEG_BOT = 630, 800
-for k, x in LEDX.items():
-    top = LEG_TOP
-    add(f'<line x1="{x}" y1="{top}" x2="{x}" y2="{LEG_BOT}" stroke="#9ea3a8" stroke-width="4"/>')
-# body
-add(f'<path d="M 1068 940 L 1068 850 A 43 43 0 0 1 1154 850 L 1154 940 Z" '
+# The LED sits right against the SuperMini's right header, legs pointing left:
+# R K G B (top to bottom) land on GPIO9, GPIO10, GPIO20, GPIO21.
+LED_ROWS = {"R": 4, "K": 5, "G": 6, "B": 7}
+FLANGE_X = 1180
+RES_X = 1040                                   # resistor body start
+LED_CY = (row(4) + row(7)) / 2
+for k, i in LED_ROWS.items():
+    y = row(i)
+    add(f'<line x1="{RES_X}" y1="{y}" x2="{FLANGE_X}" y2="{y}" stroke="#9ea3a8" stroke-width="4"/>')
+    text(FLANGE_X - 12, y - 7, k, 12, "#333", "end", "bold")
+# body (side view, dome to the right)
+add(f'<path d="M {FLANGE_X + 10} {LED_CY - 50} L {FLANGE_X + 70} {LED_CY - 50} '
+    f'A 50 50 0 0 1 {FLANGE_X + 70} {LED_CY + 50} L {FLANGE_X + 10} {LED_CY + 50} Z" '
     f'fill="#eef2f6" stroke="#9aa4ae" stroke-width="2" opacity="0.95"/>')
-rect(1058, 932, 106, 14, "#e2e8ee", "#9aa4ae", 2, rx=2)
-rect(1056, 800, 110, 14, "#dfe5ea", "#9aa4ae", 1.5, rx=2)
-for c, cx in (("#ff4d4d", 1095), ("#3cc35a", 1111), ("#3d7bff", 1127)):
-    circle(cx, 880, 6, c)
-text(1111, 975, "5 mm RGB LED, common cathode", 16, anchor="middle", weight="bold")
-text(1111, 995, "longest leg = K (cathode)", 12, "#777", "middle")
-text(1290, 880, "seen from the back: B G K R", 12, "#777")
-text(1290, 897, "(usual order R K G B from the front)", 12, "#777")
-text(1290, 914, "check each leg with a 3 V coin cell", 12, "#777")
-for k, x in LEDX.items():
-    text(x, 828 if k != "K" else 828, k, 12, "#333", "middle", "bold")
+rect(FLANGE_X, LED_CY - 58, 14, 116, "#dfe5ea", "#9aa4ae", 1.5, rx=2)
+for c, dy in (("#ff4d4d", -16), ("#3cc35a", 0), ("#3d7bff", 16)):
+    circle(FLANGE_X + 75, LED_CY + dy, 6, c)
+text(FLANGE_X + 60, LED_CY + 85, "5 mm RGB LED, common cathode", 16, anchor="middle", weight="bold")
+text(FLANGE_X + 60, LED_CY + 105, "legs R K G B → GPIO 9 10 20 21", 12, "#777", "middle")
+text(FLANGE_X + 60, LED_CY + 121, "longest leg = K, driven LOW by GPIO10", 12, "#777", "middle")
+text(FLANGE_X + 60, LED_CY + 137, "check each leg with a 3 V coin cell", 12, "#777", "middle")
 
 
-def resistor(x, y_top, bands, label):
-    rect(x - 8, y_top, 16, 46, "#d8c28e", "#9c8550", 1.2, rx=6)
+def resistor_h(x, y, bands, label):
+    rect(x, y - 8, 46, 16, "#d8c28e", "#9c8550", 1.2, rx=6)
     for i, bc in enumerate(bands):
-        rect(x - 8, y_top + 7 + i * 8, 16, 4, bc)
-    lx, ly = x + 17, y_top + 23
-    text(lx, ly, label, 11, "#333", "middle", "bold", f'transform="rotate(-90 {lx} {ly})"')
+        rect(x + 7 + i * 8, y - 8, 4, 16, bc)
 
 
-RES_TOP = 660
 BAND_220 = ["#d32f2f", "#d32f2f", "#6d4c41", "#c9a227"]
 BAND_47 = ["#fbc02d", "#7b1fa2", "#111", "#c9a227"]
-resistor(LEDX["R"], RES_TOP, BAND_220, "220Ω")
-resistor(LEDX["G"], RES_TOP, BAND_47, "47Ω")
-resistor(LEDX["B"], RES_TOP, BAND_47, "47Ω")
+LED_RES = {"R": (BAND_220, "220Ω"), "G": (BAND_47, "47Ω"), "B": (BAND_47, "47Ω")}
 
 # --------------------------------------------------------------- wires ------
 # sensor side (FPC breakout -> SuperMini left column)
@@ -231,12 +227,9 @@ wire("5v", [(JX + 14, jst_y[5]), (1170, jst_y[5]), (1170, 200), (745, 200), (745
 wire("gnd", [(JX + 14, jst_y[4]), (1150, jst_y[4]), (1150, 220), (765, 220), (765, row(1) - 4),
              (LX, row(1) - 4)])
 
-# LED: resistor tops -> GPIO10/20/21, cathode -> G (under the board)
-wire("ledr", [(LEDX["R"], LEG_TOP), (LEDX["R"], row(5)), (RX, row(5))])
-wire("ledg", [(LEDX["G"], LEG_TOP), (LEDX["G"], row(6)), (RX, row(6))])
-wire("ledb", [(LEDX["B"], LEG_TOP), (LEDX["B"], row(7)), (RX, row(7))])
-wire("gnd", [(LEDX["K"], LEG_TOP), (LEDX["K"], 470), (BX + BW, 470), (848, 470), (848, row(1) - 5),
-             (LX, row(1) - 5)], under_from=2)
+# LED: short links from the pads to the resistors (K straight to its leg)
+for k, color in (("R", "ledr"), ("K", "gnd"), ("G", "ledg"), ("B", "ledb")):
+    wire(color, [(RX, row(LED_ROWS[k])), (RES_X, row(LED_ROWS[k]))])
 
 # under-board wires go between the PCB fill and the chip/pads
 mark = len(out)
@@ -245,6 +238,9 @@ seg = out[mark:]
 del out[mark:]
 out[UNDER_MARK:UNDER_MARK] = seg
 draw_wires()
+for k, (bands, label) in LED_RES.items():
+    resistor_h(RES_X, row(LED_ROWS[k]), bands, label)
+    text(RES_X + 23, row(LED_ROWS[k]) - 12, label, 10, "#222", "middle", "bold")
 DX = 930
 rect(DX, 188, 64, 24, "#1b1b1b", "#000", 1.5, rx=5)
 rect(DX + 6, 188, 9, 24, "#cfcfcf")           # cathode band toward the SuperMini
@@ -256,11 +252,11 @@ text(745 - 8, 195 - 10, "+5V", 12, darker(C["5v"]), "end", "bold")
 text(1150 + 30, 240, "GND", 12, "#333", "start", "bold")
 add(f'<line x1="440" y1="785" x2="490" y2="785" stroke="#9aa0a6" stroke-width="5" stroke-dasharray="9 6"/>')
 text(500, 790, "dashed = wire runs under the SuperMini to the G pad.", 13, "#444")
-text(500, 808, "The G pad takes 3 wires: sensor GND, EBB GND, LED K.", 13, "#444")
+text(500, 808, "The G pad takes 2 wires: sensor GND and EBB GND.", 13, "#444")
 draw_joints()
 
 # --------------------------------------------------------- connection table --
-TY = 1035
+TY = 895
 rect(30, TY - 30, W - 60, 140, "#f6f7f9", "#e1e4e8", 1, rx=8)
 rows = [
     ("3v3", "FPC 7 (+8)", "3.3", "sensor supply"),
@@ -273,10 +269,10 @@ rows = [
     ("pres", "JST 3 PB6", "GPIO5", "presence out"),
     ("cut", "JST 2 PB5", "GPIO6", "cutter out"),
     ("tan", "JST 1 PB7", "GPIO7", "tangle out"),
-    ("ledr", "LED R + 220Ω", "GPIO10", "red"),
+    ("ledr", "LED R + 220Ω", "GPIO9", "red"),
+    ("gnd", "LED K", "GPIO10", "cathode, LOW"),
     ("ledg", "LED G + 47Ω", "GPIO20", "green"),
     ("ledb", "LED B + 47Ω", "GPIO21", "blue"),
-    ("gnd", "LED K", "G", "LED ground"),
 ]
 cols, per_col = 4, 4
 cw = (W - 100) / cols
