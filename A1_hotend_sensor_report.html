@@ -144,16 +144,16 @@
       </g>
       <!-- GND bus -->
       <path d="M236 70 H300 V110 H236" fill="none" stroke="#374151" stroke-width="2.5"/>
-      <!-- sensor 1: presence -->
+      <!-- sensor 1 (pin 3): cutter -->
       <g>
         <rect x="430" y="120" width="170" height="70" rx="8" fill="none" stroke="#1d4ed8" stroke-width="2"/>
-        <text x="515" y="146" text-anchor="middle" font-weight="700" font-size="14" fill="currentColor">Filament presence</text>
+        <text x="515" y="146" text-anchor="middle" font-weight="700" font-size="14" fill="currentColor">Filament cutter lever</text>
         <text x="515" y="168" text-anchor="middle" font-size="12" fill="currentColor" opacity=".7">Hall IC · MT9105</text>
       </g>
-      <!-- sensor 2: cutter -->
+      <!-- sensor 2 (pin 4): presence -->
       <g>
         <rect x="430" y="210" width="170" height="70" rx="8" fill="none" stroke="#1d4ed8" stroke-width="2"/>
-        <text x="515" y="236" text-anchor="middle" font-weight="700" font-size="14" fill="currentColor">Filament cutter lever</text>
+        <text x="515" y="236" text-anchor="middle" font-weight="700" font-size="14" fill="currentColor">Filament presence</text>
         <text x="515" y="258" text-anchor="middle" font-size="12" fill="currentColor" opacity=".7">Hall IC · MT9105</text>
       </g>
       <!-- sensor 3: tangle -->
@@ -198,8 +198,8 @@
       <tbody>
         <tr><td class="num">1</td><td>GND</td><td><span class="tag t-gnd">GND</span></td><td>Ground, shared with pin 2</td></tr>
         <tr><td class="num">2</td><td>GND</td><td><span class="tag t-gnd">GND</span></td><td>Ground, shared with pin 1</td></tr>
-        <tr><td class="num">3</td><td>Filament presence sense</td><td><span class="tag t-sig">OUT</span></td><td>Analog Hall output</td></tr>
-        <tr><td class="num">4</td><td>Filament cutter position</td><td><span class="tag t-sig">OUT</span></td><td>Analog Hall output</td></tr>
+        <tr><td class="num">3</td><td>Filament cutter position</td><td><span class="tag t-sig">OUT</span></td><td>Analog Hall output</td></tr>
+        <tr><td class="num">4</td><td>Filament presence sense</td><td><span class="tag t-sig">OUT</span></td><td>Analog Hall output</td></tr>
         <tr><td class="num">5</td><td>Not connected / unknown</td><td><span class="tag t-nc">?</span></td><td>No function identified yet</td></tr>
         <tr><td class="num">6</td><td>Filament tangle sense</td><td><span class="tag t-sig">OUT</span></td><td>Analog Hall output</td></tr>
         <tr><td class="num">7</td><td>Supply (VCC)</td><td><span class="tag t-vcc">VCC</span></td><td>Confirmed, 3.3 V</td></tr>
@@ -214,7 +214,7 @@
   <div class="card">
     <p class="muted">Measured at each output with the sensor installed in the hotend assembly, supply <b>VCC = 3.3 V</b>.</p>
 
-    <h3>Filament presence (pin 3)</h3>
+    <h3>Filament presence (pin 4)</h3>
     <table>
       <thead><tr><th>State</th><th>Voltage</th><th>Field (calculated)</th></tr></thead>
       <tbody>
@@ -225,7 +225,7 @@
     <div class="bar"><i style="left:6%"></i></div>
     <div class="scale"><span>0 V · filament inserted</span><span>1.1 V · no filament</span></div>
 
-    <h3>Filament cutter (pin 4)</h3>
+    <h3>Filament cutter (pin 3)</h3>
     <table>
       <thead><tr><th>State</th><th>Voltage</th><th>Field (calculated)</th></tr></thead>
       <tbody>
@@ -260,8 +260,8 @@
     <table>
       <thead><tr><th>Sensor</th><th>Observed behaviour</th><th>Practical reading</th></tr></thead>
       <tbody>
-        <tr><td>Filament presence (pin 3)</td><td>Hard flip at a defined position</td><td>Digital-like: inserted / not inserted</td></tr>
-        <tr><td>Filament cutter (pin 4)</td><td>Hard flip at a defined position</td><td>Digital-like: lever pressed / at rest</td></tr>
+        <tr><td>Filament presence (pin 4)</td><td>Hard flip at a defined position</td><td>Digital-like: inserted / not inserted</td></tr>
+        <tr><td>Filament cutter (pin 3)</td><td>Hard flip at a defined position</td><td>Digital-like: lever pressed / at rest</td></tr>
         <tr><td>Filament tangle (pin 6)</td><td>Varies linearly with the rate of compression of the buffer</td><td>Analog: usable as a compression signal</td></tr>
       </tbody>
     </table>

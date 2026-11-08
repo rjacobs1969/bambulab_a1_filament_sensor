@@ -24,18 +24,21 @@
 
 // ---------------------------------------------------------------- pins ----
 // ADC1 pins only (ADC2 on the C3 is unreliable). GPIO2 is a strapping pin.
-static const uint8_t ADC_PIN[3] = {0, 1, 3};   // presence, cutter, tangle
+// FPC pin 3 = cutter -> GPIO0, pin 4 = presence -> GPIO1, pin 6 = tangle -> GPIO3
+static const uint8_t ADC_PIN[3] = {1, 0, 3};   // presence, cutter, tangle
 // To EBB42 Endstop connector (P10): GPIO5 -> pin 3 (PB6), GPIO6 -> pin 2 (PB5),
 // GPIO7 -> pin 1 (PB7)
 static const uint8_t OUT_PIN[3] = {5, 6, 7};
-// Common-cathode RGB LED plugged straight across GPIO9/10/20/21: its legs
-// R K G B line up with those four header pins (resistors in the R, G, B legs).
-// The cathode sits on GPIO10, driven LOW permanently.
-// GPIO9 is the BOOT strapping pin: at reset GPIO10 floats, so no current flows
-// through the red LED and GPIO9 still reads HIGH -> normal boot. GPIO9 also has
-// the BOOT button to GND, so its drive is limited (~10 mA) in case the button
-// is pressed while the pin drives the red LED.
-static const uint8_t LED_R = 9, LED_K = 10, LED_G = 20, LED_B = 21;
+// Common-ANODE RGB LED plugged straight across GPIO9/10/20/21: its legs
+// G A R B line up with those four header pins (resistors in the G, R, B legs).
+// The anode sits on GPIO10, driven HIGH after boot; a colour lights when its
+// pin is LOW, so the PWM is inverted.
+// GPIO9 (green) is the BOOT strapping pin and must read HIGH at reset. At
+// reset GPIO10 floats, so no current can flow into GPIO9 through the green LED
+// and the pin keeps its pull-up -> normal boot. GPIO9 also has the BOOT button
+// to GND, so its drive is limited (~10 mA) in case the button is pressed while
+// the pin drives HIGH (green off).
+static const uint8_t LED_G = 9, LED_A = 10, LED_R = 20, LED_B = 21;
 static const uint8_t LED_ONBOARD = 8;                     // blue, active low
 
 enum { CH_PRESENCE = 0, CH_CUTTER, CH_TANGLE, CH_COUNT };
@@ -182,11 +185,12 @@ static bool saveConfig() {
 }
 
 // ------------------------------------------------------------------ LED ---
+// Common anode: duty 255 = pin always HIGH = colour off.
 static void setRgb(uint8_t r, uint8_t g, uint8_t b) {
   uint16_t k = cfg.led_brightness;
-  analogWrite(LED_R, r * k / 255);
-  analogWrite(LED_G, g * k / 255);
-  analogWrite(LED_B, b * k / 255);
+  analogWrite(LED_R, 255 - r * k / 255);
+  analogWrite(LED_G, 255 - g * k / 255);
+  analogWrite(LED_B, 255 - b * k / 255);
 }
 
 // Yellow is red + green; the green share sets the hue. Tune it together with
@@ -474,9 +478,6 @@ void setup() {
     pinMode(OUT_PIN[ch], OUTPUT_OPEN_DRAIN);
     digitalWrite(OUT_PIN[ch], HIGH);
   }
-  pinMode(LED_K, OUTPUT);                       // LED common cathode
-  digitalWrite(LED_K, LOW);
-  gpio_set_drive_capability((gpio_num_t)LED_K, GPIO_DRIVE_CAP_3);  // sinks all 3 colours
   pinMode(LED_ONBOARD, OUTPUT);
   digitalWrite(LED_ONBOARD, HIGH);
 
@@ -491,8 +492,15 @@ void setup() {
   }
 
   sampleAll(millis(), true);
-  updateLeds(millis());  // attaches PWM to the LED pins
-  gpio_set_drive_capability((gpio_num_t)LED_R, GPIO_DRIVE_CAP_1);  // see BOOT note above
+
+  // RGB LED: attach PWM with every colour off (pins HIGH) before powering the
+  // common anode, so it never flashes at boot.
+  setRgb(0, 0, 0);
+  gpio_set_drive_capability((gpio_num_t)LED_G, GPIO_DRIVE_CAP_1);  // see BOOT note above
+  pinMode(LED_A, OUTPUT);
+  gpio_set_drive_capability((gpio_num_t)LED_A, GPIO_DRIVE_CAP_3);  // sources all 3 colours
+  digitalWrite(LED_A, HIGH);
+  updateLeds(millis());
 }
 
 void loop() {

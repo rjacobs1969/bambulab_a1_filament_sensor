@@ -39,8 +39,8 @@ Signal map as measured. This shows the mapping, not a traced netlist.
    GND ───┤ 1  GND                  │
    GND ───┤ 2  GND                  ├── GND bus ──────────── all three sensors
           │                         │
-   OUT ───┤ 3  Filament presence    ├───────────────────────► Filament presence   → measure
-   OUT ───┤ 4  Cutter position      ├───────────────────────► Filament cutter lever → measure
+   OUT ───┤ 3  Cutter position      ├───────────────────────► Filament cutter lever → measure
+   OUT ───┤ 4  Filament presence    ├───────────────────────► Filament presence   → measure
           │ 5  NC / unknown         │   (not connected)
    OUT ───┤ 6  Tangle sense         ├───────────────────────► Filament tangle      → measure
    VCC ───┤ 7  VCC (3.3 V)  ────────┤─── supply to all sensors
@@ -61,12 +61,17 @@ Signal map as measured. This shows the mapping, not a traced netlist.
 
 ## Pinout
 
+> **Correction (2026-11-08).** The first version of this report had pins 3 and 4
+> swapped. Testing with the EBB42 adapter showed that pin 3 is the cutter and
+> pin 4 is filament presence. The measured voltages were right; only the pin
+> labels were wrong.
+
 | Pin | Function | Type | Notes |
 |:---:|---|:---:|---|
 | 1 | GND | GND | Ground, shared with pin 2 |
 | 2 | GND | GND | Ground, shared with pin 1 |
-| 3 | Filament presence sense | OUT | Analog Hall output |
-| 4 | Filament cutter position | OUT | Analog Hall output |
+| 3 | Filament cutter position | OUT | Analog Hall output |
+| 4 | Filament presence sense | OUT | Analog Hall output |
 | 5 | Not connected / unknown | ? | No function identified yet |
 | 6 | Filament tangle sense | OUT | Analog Hall output |
 | 7 | Supply (VCC) | VCC | Confirmed, 3.3 V |
@@ -78,7 +83,7 @@ Signal map as measured. This shows the mapping, not a traced netlist.
 
 Measured at each output with the sensor installed in the hotend assembly, supply **VCC = 3.3 V**.
 
-### Filament presence (pin 3)
+### Filament presence (pin 4)
 
 | State | Voltage | Field (calculated) |
 |---|---:|---:|
@@ -90,7 +95,7 @@ Measured at each output with the sensor installed in the hotend assembly, supply
     filament inserted (0.03 V)               no filament (1.1 V)
 ```
 
-### Filament cutter (pin 4)
+### Filament cutter (pin 3)
 
 | State | Voltage | Field (calculated) |
 |---|---:|---:|
@@ -122,8 +127,8 @@ Measured at each output with the sensor installed in the hotend assembly, supply
 
 | Sensor | Observed behaviour | Practical reading |
 |---|---|---|
-| Filament presence (pin 3) | Hard flip at a defined position | Digital-like: inserted / not inserted |
-| Filament cutter (pin 4) | Hard flip at a defined position | Digital-like: lever pressed / at rest |
+| Filament presence (pin 4) | Hard flip at a defined position | Digital-like: inserted / not inserted |
+| Filament cutter (pin 3) | Hard flip at a defined position | Digital-like: lever pressed / at rest |
 | Filament tangle (pin 6) | Varies linearly with the rate of compression of the buffer | Analog: usable as a compression signal |
 
 - **The hard flips are mechanical.** When filament is inserted, it pushes a lever that moves a small magnet. The magnet is either over the Hall sensor or not, so filament presence has only two real states. The cutter has a large movement path, but only the last part of that path moves the magnet over the sensor, so the cutter output changes only over that short end stretch.

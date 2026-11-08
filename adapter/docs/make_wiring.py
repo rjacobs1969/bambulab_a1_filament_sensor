@@ -28,7 +28,7 @@ def circle(x, y, r, fill, stroke="none", sw=1):
 C = {
     "5v": "#e53935", "3v3": "#fb8c00", "gnd": "#212121",
     "pres": "#fdd835", "cut": "#8e24aa", "tan": "#00acc1",
-    "ledr": "#ff5c8a", "ledg": "#43a047", "ledb": "#1e63d6",
+    "ledr": "#ff5c8a", "ledg": "#43a047", "ledb": "#1e63d6", "leda": "#8d6e63",
 }
 
 
@@ -140,7 +140,7 @@ rect(160, 370, 55, 130, "#222", "#000", 1.5, rx=3)
 rect(160, 370, 16, 130, "#7b5a3a", rx=2)
 text(188, 440, "FPC", 11, "#bbb", "middle", extra='transform="rotate(-90 188 440)"')
 # traces + header pins
-labels = ["8 VCC", "7 VCC", "6 TANGLE", "5 n/c", "4 CUTTER", "3 PRESENCE", "2 GND", "1 GND"]
+labels = ["8 VCC", "7 VCC", "6 TANGLE", "5 n/c", "4 PRESENCE", "3 CUTTER", "2 GND", "1 GND"]
 for k in range(8):
     y = fpc_row(k)
     add(f'<line x1="215" y1="{435 + (k - 3.5) * 14}" x2="{FPX - 12}" y2="{y}" '
@@ -175,8 +175,8 @@ text(JX + 220, 356, "check order vs EBB silkscreen", 12, "#777")
 
 # ------------------------------------------------- RGB LED + resistors ------
 # The LED sits right against the SuperMini's right header, legs pointing left:
-# R K G B (top to bottom) land on GPIO9, GPIO10, GPIO20, GPIO21.
-LED_ROWS = {"R": 4, "K": 5, "G": 6, "B": 7}
+# G A R B (top to bottom) land on GPIO9, GPIO10, GPIO20, GPIO21.
+LED_ROWS = {"G": 4, "A": 5, "R": 6, "B": 7}
 FLANGE_X = 1180
 RES_X = 1040                                   # resistor body start
 LED_CY = (row(4) + row(7)) / 2
@@ -191,9 +191,9 @@ add(f'<path d="M {FLANGE_X + 10} {LED_CY - 50} L {FLANGE_X + 70} {LED_CY - 50} '
 rect(FLANGE_X, LED_CY - 58, 14, 116, "#dfe5ea", "#9aa4ae", 1.5, rx=2)
 for c, dy in (("#ff4d4d", -16), ("#3cc35a", 0), ("#3d7bff", 16)):
     circle(FLANGE_X + 75, LED_CY + dy, 6, c)
-text(FLANGE_X + 60, LED_CY + 85, "5 mm RGB LED, common cathode", 16, anchor="middle", weight="bold")
-text(FLANGE_X + 60, LED_CY + 105, "legs R K G B → GPIO 9 10 20 21", 12, "#777", "middle")
-text(FLANGE_X + 60, LED_CY + 121, "longest leg = K, driven LOW by GPIO10", 12, "#777", "middle")
+text(FLANGE_X + 60, LED_CY + 85, "5 mm RGB LED, common anode", 16, anchor="middle", weight="bold")
+text(FLANGE_X + 60, LED_CY + 105, "legs G A R B → GPIO 9 10 20 21", 12, "#777", "middle")
+text(FLANGE_X + 60, LED_CY + 121, "longest leg = A, driven HIGH by GPIO10", 12, "#777", "middle")
 text(FLANGE_X + 60, LED_CY + 137, "check each leg with a 3 V coin cell", 12, "#777", "middle")
 
 
@@ -205,14 +205,14 @@ def resistor_h(x, y, bands, label):
 
 BAND_220 = ["#d32f2f", "#d32f2f", "#6d4c41", "#c9a227"]
 BAND_47 = ["#fbc02d", "#7b1fa2", "#111", "#c9a227"]
-LED_RES = {"R": (BAND_220, "220Ω"), "G": (BAND_47, "47Ω"), "B": (BAND_47, "47Ω")}
+LED_RES = {"G": (BAND_47, "47Ω"), "R": (BAND_220, "220Ω"), "B": (BAND_47, "47Ω")}
 
 # --------------------------------------------------------------- wires ------
 # sensor side (FPC breakout -> SuperMini left column)
 wire("3v3", [(FPX, fpc_row(1)), (720, fpc_row(1)), (720, row(2)), (LX, row(2))])
 wire("tan", [(FPX, fpc_row(2)), (680, fpc_row(2)), (680, row(4)), (LX, row(4))])
-wire("cut", [(FPX, fpc_row(4)), (640, fpc_row(4)), (640, row(6)), (LX, row(6))])
-wire("pres", [(FPX, fpc_row(5)), (600, fpc_row(5)), (600, row(7)), (LX, row(7))])
+wire("pres", [(FPX, fpc_row(4)), (640, fpc_row(4)), (640, row(6)), (LX, row(6))])
+wire("cut", [(FPX, fpc_row(5)), (600, fpc_row(5)), (600, row(7)), (LX, row(7))])
 # sensor GND: pin 1, down, then under the SuperMini to the G pad
 wire("gnd", [(FPX, fpc_row(7)), (430, fpc_row(7)), (430, 655), (830, 655), (830, BY + BH),
              (830, row(1) + 5), (LX, row(1) + 5)], under_from=4)
@@ -227,8 +227,8 @@ wire("5v", [(JX + 14, jst_y[5]), (1170, jst_y[5]), (1170, 200), (745, 200), (745
 wire("gnd", [(JX + 14, jst_y[4]), (1150, jst_y[4]), (1150, 220), (765, 220), (765, row(1) - 4),
              (LX, row(1) - 4)])
 
-# LED: short links from the pads to the resistors (K straight to its leg)
-for k, color in (("R", "ledr"), ("K", "gnd"), ("G", "ledg"), ("B", "ledb")):
+# LED: short links from the pads to the resistors (A straight to its leg)
+for k, color in (("G", "ledg"), ("A", "leda"), ("R", "ledr"), ("B", "ledb")):
     wire(color, [(RX, row(LED_ROWS[k])), (RES_X, row(LED_ROWS[k]))])
 
 # under-board wires go between the PCB fill and the chip/pads
@@ -261,17 +261,17 @@ rect(30, TY - 30, W - 60, 140, "#f6f7f9", "#e1e4e8", 1, rx=8)
 rows = [
     ("3v3", "FPC 7 (+8)", "3.3", "sensor supply"),
     ("gnd", "FPC 1 (+2)", "G", "sensor ground"),
-    ("pres", "FPC 3", "GPIO0", "presence in"),
-    ("cut", "FPC 4", "GPIO1", "cutter in"),
+    ("cut", "FPC 3", "GPIO0", "cutter in"),
+    ("pres", "FPC 4", "GPIO1", "presence in"),
     ("tan", "FPC 6", "GPIO3", "tangle in"),
     ("5v", "JST 5 +5V", "5V", "supply (via D1)"),
     ("gnd", "JST 4 GND", "G", "ground"),
     ("pres", "JST 3 PB6", "GPIO5", "presence out"),
     ("cut", "JST 2 PB5", "GPIO6", "cutter out"),
     ("tan", "JST 1 PB7", "GPIO7", "tangle out"),
-    ("ledr", "LED R + 220Ω", "GPIO9", "red"),
-    ("gnd", "LED K", "GPIO10", "cathode, LOW"),
-    ("ledg", "LED G + 47Ω", "GPIO20", "green"),
+    ("ledg", "LED G + 47Ω", "GPIO9", "green"),
+    ("leda", "LED A", "GPIO10", "anode, HIGH"),
+    ("ledr", "LED R + 220Ω", "GPIO20", "red"),
     ("ledb", "LED B + 47Ω", "GPIO21", "blue"),
 ]
 cols, per_col = 4, 4

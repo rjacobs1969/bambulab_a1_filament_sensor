@@ -123,10 +123,10 @@
 <text x="346" y="437" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#fff" text-anchor="end" font-weight="bold" >5 n/c</text>
 <rect x="355" y="453" width="26" height="26" rx="2" fill="#111" stroke="none" stroke-width="1" />
 <rect x="361" y="459" width="14" height="14" rx="0" fill="#d4a73c" stroke="#8c6a1c" stroke-width="1" />
-<text x="346" y="471" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#fff" text-anchor="end" font-weight="bold" >4 CUTTER</text>
+<text x="346" y="471" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#fff" text-anchor="end" font-weight="bold" >4 PRESENCE</text>
 <rect x="355" y="487" width="26" height="26" rx="2" fill="#111" stroke="none" stroke-width="1" />
 <rect x="361" y="493" width="14" height="14" rx="0" fill="#d4a73c" stroke="#8c6a1c" stroke-width="1" />
-<text x="346" y="505" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#fff" text-anchor="end" font-weight="bold" >3 PRESENCE</text>
+<text x="346" y="505" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#fff" text-anchor="end" font-weight="bold" >3 CUTTER</text>
 <rect x="355" y="521" width="26" height="26" rx="2" fill="#111" stroke="none" stroke-width="1" />
 <rect x="361" y="527" width="14" height="14" rx="0" fill="#d4a73c" stroke="#8c6a1c" stroke-width="1" />
 <text x="346" y="539" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#fff" text-anchor="end" font-weight="bold" >2 GND</text>
@@ -159,11 +159,11 @@
 <text x="1460" y="340" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#555" text-anchor="start" font-weight="normal" >→ EBB42 Endstop port</text>
 <text x="1460" y="356" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >check order vs EBB silkscreen</text>
 <line x1="1040" y1="486" x2="1180" y2="486" stroke="#9ea3a8" stroke-width="4"/>
-<text x="1168" y="479" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#333" text-anchor="end" font-weight="bold" >R</text>
+<text x="1168" y="479" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#333" text-anchor="end" font-weight="bold" >G</text>
 <line x1="1040" y1="520" x2="1180" y2="520" stroke="#9ea3a8" stroke-width="4"/>
-<text x="1168" y="513" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#333" text-anchor="end" font-weight="bold" >K</text>
+<text x="1168" y="513" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#333" text-anchor="end" font-weight="bold" >A</text>
 <line x1="1040" y1="554" x2="1180" y2="554" stroke="#9ea3a8" stroke-width="4"/>
-<text x="1168" y="547" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#333" text-anchor="end" font-weight="bold" >G</text>
+<text x="1168" y="547" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#333" text-anchor="end" font-weight="bold" >R</text>
 <line x1="1040" y1="588" x2="1180" y2="588" stroke="#9ea3a8" stroke-width="4"/>
 <text x="1168" y="581" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#333" text-anchor="end" font-weight="bold" >B</text>
 <path d="M 1190 487.0 L 1250 487.0 A 50 50 0 0 1 1250 587.0 L 1190 587.0 Z" fill="#eef2f6" stroke="#9aa4ae" stroke-width="2" opacity="0.95"/>
@@ -171,18 +171,18 @@
 <circle cx="1255" cy="521.0" r="6" fill="#ff4d4d" stroke="none" stroke-width="1"/>
 <circle cx="1255" cy="537.0" r="6" fill="#3cc35a" stroke="none" stroke-width="1"/>
 <circle cx="1255" cy="553.0" r="6" fill="#3d7bff" stroke="none" stroke-width="1"/>
-<text x="1240" y="622.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#222" text-anchor="middle" font-weight="bold" >5 mm RGB LED, common cathode</text>
-<text x="1240" y="642.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="middle" font-weight="normal" >legs R K G B → GPIO 9 10 20 21</text>
-<text x="1240" y="658.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="middle" font-weight="normal" >longest leg = K, driven LOW by GPIO10</text>
+<text x="1240" y="622.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="16" fill="#222" text-anchor="middle" font-weight="bold" >5 mm RGB LED, common anode</text>
+<text x="1240" y="642.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="middle" font-weight="normal" >legs G A R B → GPIO 9 10 20 21</text>
+<text x="1240" y="658.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="middle" font-weight="normal" >longest leg = A, driven HIGH by GPIO10</text>
 <text x="1240" y="674.0" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="middle" font-weight="normal" >check each leg with a 3 V coin cell</text>
 <path d="M 368,364 L 720,364 L 720,418 L 782,418" fill="none" stroke="#8a4d00" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M 368,364 L 720,364 L 720,418 L 782,418" fill="none" stroke="#fb8c00" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M 368,398 L 680,398 L 680,486 L 782,486" fill="none" stroke="#005e6a" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M 368,398 L 680,398 L 680,486 L 782,486" fill="none" stroke="#00acc1" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M 368,466 L 640,466 L 640,554 L 782,554" fill="none" stroke="#4e135d" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M 368,466 L 640,466 L 640,554 L 782,554" fill="none" stroke="#8e24aa" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M 368,500 L 600,500 L 600,588 L 782,588" fill="none" stroke="#8b761d" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M 368,500 L 600,500 L 600,588 L 782,588" fill="none" stroke="#fdd835" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 368,466 L 640,466 L 640,554 L 782,554" fill="none" stroke="#8b761d" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 368,466 L 640,466 L 640,554 L 782,554" fill="none" stroke="#fdd835" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 368,500 L 600,500 L 600,588 L 782,588" fill="none" stroke="#4e135d" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 368,500 L 600,500 L 600,588 L 782,588" fill="none" stroke="#8e24aa" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M 368,568 L 430,568 L 430,655 L 830,655 L 830,630" fill="none" stroke="#121212" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M 368,568 L 430,568 L 430,655 L 830,655 L 830,630" fill="none" stroke="#212121" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M 998,350 L 1254,350" fill="none" stroke="#8b761d" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
@@ -195,26 +195,26 @@
 <path d="M 1254,282 L 1170,282 L 1170,200 L 745,200 L 745,350 L 782,350" fill="none" stroke="#e53935" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M 1254,316 L 1150,316 L 1150,220 L 765,220 L 765,380 L 782,380" fill="none" stroke="#121212" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M 1254,316 L 1150,316 L 1150,220 L 765,220 L 765,380 L 782,380" fill="none" stroke="#212121" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M 998,486 L 1040,486" fill="none" stroke="#8c324b" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M 998,486 L 1040,486" fill="none" stroke="#ff5c8a" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M 998,520 L 1040,520" fill="none" stroke="#121212" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M 998,520 L 1040,520" fill="none" stroke="#212121" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M 998,554 L 1040,554" fill="none" stroke="#245827" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M 998,554 L 1040,554" fill="none" stroke="#43a047" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 998,486 L 1040,486" fill="none" stroke="#245827" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 998,486 L 1040,486" fill="none" stroke="#43a047" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 998,520 L 1040,520" fill="none" stroke="#4d3c36" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 998,520 L 1040,520" fill="none" stroke="#8d6e63" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 998,554 L 1040,554" fill="none" stroke="#8c324b" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M 998,554 L 1040,554" fill="none" stroke="#ff5c8a" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M 998,588 L 1040,588" fill="none" stroke="#103675" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M 998,588 L 1040,588" fill="none" stroke="#1e63d6" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
 <rect x="1040" y="478" width="46" height="16" rx="6" fill="#d8c28e" stroke="#9c8550" stroke-width="1.2" />
-<rect x="1047" y="478" width="4" height="16" rx="0" fill="#d32f2f" stroke="none" stroke-width="1" />
-<rect x="1055" y="478" width="4" height="16" rx="0" fill="#d32f2f" stroke="none" stroke-width="1" />
-<rect x="1063" y="478" width="4" height="16" rx="0" fill="#6d4c41" stroke="none" stroke-width="1" />
+<rect x="1047" y="478" width="4" height="16" rx="0" fill="#fbc02d" stroke="none" stroke-width="1" />
+<rect x="1055" y="478" width="4" height="16" rx="0" fill="#7b1fa2" stroke="none" stroke-width="1" />
+<rect x="1063" y="478" width="4" height="16" rx="0" fill="#111" stroke="none" stroke-width="1" />
 <rect x="1071" y="478" width="4" height="16" rx="0" fill="#c9a227" stroke="none" stroke-width="1" />
-<text x="1063" y="474" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#222" text-anchor="middle" font-weight="bold" >220Ω</text>
+<text x="1063" y="474" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#222" text-anchor="middle" font-weight="bold" >47Ω</text>
 <rect x="1040" y="546" width="46" height="16" rx="6" fill="#d8c28e" stroke="#9c8550" stroke-width="1.2" />
-<rect x="1047" y="546" width="4" height="16" rx="0" fill="#fbc02d" stroke="none" stroke-width="1" />
-<rect x="1055" y="546" width="4" height="16" rx="0" fill="#7b1fa2" stroke="none" stroke-width="1" />
-<rect x="1063" y="546" width="4" height="16" rx="0" fill="#111" stroke="none" stroke-width="1" />
+<rect x="1047" y="546" width="4" height="16" rx="0" fill="#d32f2f" stroke="none" stroke-width="1" />
+<rect x="1055" y="546" width="4" height="16" rx="0" fill="#d32f2f" stroke="none" stroke-width="1" />
+<rect x="1063" y="546" width="4" height="16" rx="0" fill="#6d4c41" stroke="none" stroke-width="1" />
 <rect x="1071" y="546" width="4" height="16" rx="0" fill="#c9a227" stroke="none" stroke-width="1" />
-<text x="1063" y="542" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#222" text-anchor="middle" font-weight="bold" >47Ω</text>
+<text x="1063" y="542" font-family="DejaVu Sans, Arial, sans-serif" font-size="10" fill="#222" text-anchor="middle" font-weight="bold" >220Ω</text>
 <rect x="1040" y="580" width="46" height="16" rx="6" fill="#d8c28e" stroke="#9c8550" stroke-width="1.2" />
 <rect x="1047" y="580" width="4" height="16" rx="0" fill="#fbc02d" stroke="none" stroke-width="1" />
 <rect x="1055" y="580" width="4" height="16" rx="0" fill="#7b1fa2" stroke="none" stroke-width="1" />
@@ -234,10 +234,10 @@
 <circle cx="782" cy="418" r="5.5" fill="#c0c0c0" stroke="#8a4d00" stroke-width="1.5"/>
 <circle cx="368" cy="398" r="5.5" fill="#c0c0c0" stroke="#005e6a" stroke-width="1.5"/>
 <circle cx="782" cy="486" r="5.5" fill="#c0c0c0" stroke="#005e6a" stroke-width="1.5"/>
-<circle cx="368" cy="466" r="5.5" fill="#c0c0c0" stroke="#4e135d" stroke-width="1.5"/>
-<circle cx="782" cy="554" r="5.5" fill="#c0c0c0" stroke="#4e135d" stroke-width="1.5"/>
-<circle cx="368" cy="500" r="5.5" fill="#c0c0c0" stroke="#8b761d" stroke-width="1.5"/>
-<circle cx="782" cy="588" r="5.5" fill="#c0c0c0" stroke="#8b761d" stroke-width="1.5"/>
+<circle cx="368" cy="466" r="5.5" fill="#c0c0c0" stroke="#8b761d" stroke-width="1.5"/>
+<circle cx="782" cy="554" r="5.5" fill="#c0c0c0" stroke="#8b761d" stroke-width="1.5"/>
+<circle cx="368" cy="500" r="5.5" fill="#c0c0c0" stroke="#4e135d" stroke-width="1.5"/>
+<circle cx="782" cy="588" r="5.5" fill="#c0c0c0" stroke="#4e135d" stroke-width="1.5"/>
 <circle cx="368" cy="568" r="5.5" fill="#c0c0c0" stroke="#121212" stroke-width="1.5"/>
 <circle cx="782" cy="389" r="5.5" fill="#c0c0c0" stroke="#121212" stroke-width="1.5"/>
 <circle cx="998" cy="350" r="5.5" fill="#c0c0c0" stroke="#8b761d" stroke-width="1.5"/>
@@ -250,12 +250,12 @@
 <circle cx="782" cy="350" r="5.5" fill="#c0c0c0" stroke="#7d1f1d" stroke-width="1.5"/>
 <circle cx="1254" cy="316" r="5.5" fill="#c0c0c0" stroke="#121212" stroke-width="1.5"/>
 <circle cx="782" cy="380" r="5.5" fill="#c0c0c0" stroke="#121212" stroke-width="1.5"/>
-<circle cx="998" cy="486" r="5.5" fill="#c0c0c0" stroke="#8c324b" stroke-width="1.5"/>
-<circle cx="1040" cy="486" r="5.5" fill="#c0c0c0" stroke="#8c324b" stroke-width="1.5"/>
-<circle cx="998" cy="520" r="5.5" fill="#c0c0c0" stroke="#121212" stroke-width="1.5"/>
-<circle cx="1040" cy="520" r="5.5" fill="#c0c0c0" stroke="#121212" stroke-width="1.5"/>
-<circle cx="998" cy="554" r="5.5" fill="#c0c0c0" stroke="#245827" stroke-width="1.5"/>
-<circle cx="1040" cy="554" r="5.5" fill="#c0c0c0" stroke="#245827" stroke-width="1.5"/>
+<circle cx="998" cy="486" r="5.5" fill="#c0c0c0" stroke="#245827" stroke-width="1.5"/>
+<circle cx="1040" cy="486" r="5.5" fill="#c0c0c0" stroke="#245827" stroke-width="1.5"/>
+<circle cx="998" cy="520" r="5.5" fill="#c0c0c0" stroke="#4d3c36" stroke-width="1.5"/>
+<circle cx="1040" cy="520" r="5.5" fill="#c0c0c0" stroke="#4d3c36" stroke-width="1.5"/>
+<circle cx="998" cy="554" r="5.5" fill="#c0c0c0" stroke="#8c324b" stroke-width="1.5"/>
+<circle cx="1040" cy="554" r="5.5" fill="#c0c0c0" stroke="#8c324b" stroke-width="1.5"/>
 <circle cx="998" cy="588" r="5.5" fill="#c0c0c0" stroke="#103675" stroke-width="1.5"/>
 <circle cx="1040" cy="588" r="5.5" fill="#c0c0c0" stroke="#103675" stroke-width="1.5"/>
 <rect x="30" y="865" width="1740" height="140" rx="8" fill="#f6f7f9" stroke="#e1e4e8" stroke-width="1" />
@@ -267,14 +267,14 @@
 <line x1="50.0" y1="916" x2="84.0" y2="916" stroke="#212121" stroke-width="6" stroke-linecap="round"/>
 <text x="98.0" y="921" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >FPC 1 (+2)  →  <tspan font-weight='bold'>G</tspan></text>
 <text x="300.0" y="921" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >sensor ground</text>
-<line x1="50.0" y1="942" x2="84.0" y2="942" stroke="#8b761d" stroke-width="10" stroke-linecap="round"/>
-<line x1="50.0" y1="942" x2="84.0" y2="942" stroke="#fdd835" stroke-width="6" stroke-linecap="round"/>
+<line x1="50.0" y1="942" x2="84.0" y2="942" stroke="#4e135d" stroke-width="10" stroke-linecap="round"/>
+<line x1="50.0" y1="942" x2="84.0" y2="942" stroke="#8e24aa" stroke-width="6" stroke-linecap="round"/>
 <text x="98.0" y="947" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >FPC 3  →  <tspan font-weight='bold'>GPIO0</tspan></text>
-<text x="300.0" y="947" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >presence in</text>
-<line x1="50.0" y1="968" x2="84.0" y2="968" stroke="#4e135d" stroke-width="10" stroke-linecap="round"/>
-<line x1="50.0" y1="968" x2="84.0" y2="968" stroke="#8e24aa" stroke-width="6" stroke-linecap="round"/>
+<text x="300.0" y="947" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >cutter in</text>
+<line x1="50.0" y1="968" x2="84.0" y2="968" stroke="#8b761d" stroke-width="10" stroke-linecap="round"/>
+<line x1="50.0" y1="968" x2="84.0" y2="968" stroke="#fdd835" stroke-width="6" stroke-linecap="round"/>
 <text x="98.0" y="973" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >FPC 4  →  <tspan font-weight='bold'>GPIO1</tspan></text>
-<text x="300.0" y="973" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >cutter in</text>
+<text x="300.0" y="973" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >presence in</text>
 <line x1="475.0" y1="890" x2="509.0" y2="890" stroke="#005e6a" stroke-width="10" stroke-linecap="round"/>
 <line x1="475.0" y1="890" x2="509.0" y2="890" stroke="#00acc1" stroke-width="6" stroke-linecap="round"/>
 <text x="523.0" y="895" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >FPC 6  →  <tspan font-weight='bold'>GPIO3</tspan></text>
@@ -299,18 +299,18 @@
 <line x1="900.0" y1="916" x2="934.0" y2="916" stroke="#00acc1" stroke-width="6" stroke-linecap="round"/>
 <text x="948.0" y="921" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >JST 1 PB7  →  <tspan font-weight='bold'>GPIO7</tspan></text>
 <text x="1150.0" y="921" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >tangle out</text>
-<line x1="900.0" y1="942" x2="934.0" y2="942" stroke="#8c324b" stroke-width="10" stroke-linecap="round"/>
-<line x1="900.0" y1="942" x2="934.0" y2="942" stroke="#ff5c8a" stroke-width="6" stroke-linecap="round"/>
-<text x="948.0" y="947" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >LED R + 220Ω  →  <tspan font-weight='bold'>GPIO9</tspan></text>
-<text x="1150.0" y="947" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >red</text>
-<line x1="900.0" y1="968" x2="934.0" y2="968" stroke="#121212" stroke-width="10" stroke-linecap="round"/>
-<line x1="900.0" y1="968" x2="934.0" y2="968" stroke="#212121" stroke-width="6" stroke-linecap="round"/>
-<text x="948.0" y="973" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >LED K  →  <tspan font-weight='bold'>GPIO10</tspan></text>
-<text x="1150.0" y="973" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >cathode, LOW</text>
-<line x1="1325.0" y1="890" x2="1359.0" y2="890" stroke="#245827" stroke-width="10" stroke-linecap="round"/>
-<line x1="1325.0" y1="890" x2="1359.0" y2="890" stroke="#43a047" stroke-width="6" stroke-linecap="round"/>
-<text x="1373.0" y="895" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >LED G + 47Ω  →  <tspan font-weight='bold'>GPIO20</tspan></text>
-<text x="1575.0" y="895" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >green</text>
+<line x1="900.0" y1="942" x2="934.0" y2="942" stroke="#245827" stroke-width="10" stroke-linecap="round"/>
+<line x1="900.0" y1="942" x2="934.0" y2="942" stroke="#43a047" stroke-width="6" stroke-linecap="round"/>
+<text x="948.0" y="947" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >LED G + 47Ω  →  <tspan font-weight='bold'>GPIO9</tspan></text>
+<text x="1150.0" y="947" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >green</text>
+<line x1="900.0" y1="968" x2="934.0" y2="968" stroke="#4d3c36" stroke-width="10" stroke-linecap="round"/>
+<line x1="900.0" y1="968" x2="934.0" y2="968" stroke="#8d6e63" stroke-width="6" stroke-linecap="round"/>
+<text x="948.0" y="973" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >LED A  →  <tspan font-weight='bold'>GPIO10</tspan></text>
+<text x="1150.0" y="973" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >anode, HIGH</text>
+<line x1="1325.0" y1="890" x2="1359.0" y2="890" stroke="#8c324b" stroke-width="10" stroke-linecap="round"/>
+<line x1="1325.0" y1="890" x2="1359.0" y2="890" stroke="#ff5c8a" stroke-width="6" stroke-linecap="round"/>
+<text x="1373.0" y="895" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >LED R + 220Ω  →  <tspan font-weight='bold'>GPIO20</tspan></text>
+<text x="1575.0" y="895" font-family="DejaVu Sans, Arial, sans-serif" font-size="12" fill="#777" text-anchor="start" font-weight="normal" >red</text>
 <line x1="1325.0" y1="916" x2="1359.0" y2="916" stroke="#103675" stroke-width="10" stroke-linecap="round"/>
 <line x1="1325.0" y1="916" x2="1359.0" y2="916" stroke="#1e63d6" stroke-width="6" stroke-linecap="round"/>
 <text x="1373.0" y="921" font-family="DejaVu Sans, Arial, sans-serif" font-size="13" fill="#222" text-anchor="start" font-weight="normal" >LED B + 47Ω  →  <tspan font-weight='bold'>GPIO21</tspan></text>

@@ -11,8 +11,8 @@ output polarity over USB, and they are stored in flash.
  ┌──────────────┐   3V3   ┌─────────────────────────────────────────┐  5V   ┌────────────────┐
  │ 7,8 VCC      │◄────────┤ 3V3 (onboard LDO)          5V ◄──(D1)───┼───────┤ 5  +5V         │
  │ 1,2 GND      ├─────────┤ GND                        GND ─────────┼───────┤ 4  GND         │
- │ 3 presence   ├────────►│ GPIO0 (ADC)          GPIO5 (OD) ────────┼──────►│ 3  Stop1 → PB6 │
- │ 4 cutter     ├────────►│ GPIO1 (ADC)          GPIO6 (OD) ────────┼──────►│ 2  Stop2 → PB5 │
+ │ 3 cutter     ├────────►│ GPIO0 (ADC)          GPIO5 (OD) ────────┼──────►│ 3  Stop1 → PB6 │
+ │ 4 presence   ├────────►│ GPIO1 (ADC)          GPIO6 (OD) ────────┼──────►│ 2  Stop2 → PB5 │
  │ 6 tangle     ├────────►│ GPIO3 (ADC)          GPIO7 (OD) ────────┼──────►│ 1  Stop3 → PB7 │
  │ 5 NC         │         │ GPIO9/10/20/21 ── RGB LED (status)      │       └────────────────┘
  └──────────────┘         └─────────────────────────────────────────┘        each input on the EBB:
@@ -74,7 +74,8 @@ channel. The pull-up is on too briefly to disturb the board's filter capacitor.
 
 ### Sensor side: direct wires
 
-FPC pins 3, 4 and 6 connect straight to GPIO0, GPIO1 and GPIO3. No parts are
+FPC pins 3 (cutter), 4 (presence) and 6 (tangle) connect straight to GPIO0,
+GPIO1 and GPIO3. No parts are
 needed:
 
 - **Filtering:** the A1 sensor board already has an R + C low-pass on each
@@ -104,29 +105,34 @@ needed:
   cable before you plug in USB. USB then powers the adapter and the sensor
   board, so calibration still works.
 
-### Status LED (5 mm RGB, common cathode)
+### Status LED (5 mm RGB, common anode)
 
-The LED's legs R, K, G, B line up with four neighbouring header pins, so it
+The LED's legs G, A, R, B line up with four neighbouring header pins, so it
 mounts directly against the SuperMini with a resistor in each colour leg:
 
 | LED leg | GPIO | Series R | Notes |
 |:---:|:---:|:---:|---|
-| R | 9 | 220 Ω | BOOT strapping pin, drive limited to ~10 mA |
-| K (longest) | 10 | none | common cathode, driven LOW permanently at full drive strength |
-| G | 20 | 47 Ω | |
+| G | 9 | 47 Ω | BOOT strapping pin, drive limited to ~10 mA |
+| A (longest) | 10 | none | common anode, driven HIGH after boot at full drive strength |
+| R | 20 | 220 Ω | |
 | B | 21 | 47 Ω | |
 
-- **Why GPIO9 is safe for red.** GPIO9 must read HIGH at reset for a normal
-  boot. At reset GPIO10 isn't driven, so the cathode floats and no current flows
-  through the red LED. The firmware pulls GPIO10 LOW only after boot.
-- **The BOOT button is on GPIO9.** Pressing it while the firmware drives red
-  shorts GPIO9 to GND. The ~10 mA drive limit keeps that harmless. Holding BOOT
-  during reset still enters download mode as usual.
-- **GPIO10 sinks all three colours,** up to about 30 mA for yellow or magenta.
-  If green or blue looks dim (they have little headroom at 3.3 V), lower their
-  resistors to 22 Ω.
+A colour lights when its pin is LOW, so the firmware inverts the PWM.
+
+- **Why GPIO9 is safe for green.** GPIO9 must read HIGH at reset for a normal
+  boot. At reset GPIO10 isn't driven, so the anode floats and nothing can pull
+  GPIO9 down through the green LED. The firmware sets all colour pins HIGH
+  (off) first and only then drives the anode HIGH, so the LED doesn't flash at
+  boot.
+- **The BOOT button is on GPIO9.** Pressing it while the firmware holds GPIO9
+  HIGH (green off) shorts the pin to GND. The ~10 mA drive limit keeps that
+  harmless. Holding BOOT during reset still enters download mode as usual.
+- **GPIO10 sources all three colours,** up to about 30 mA for yellow or
+  magenta. If green or blue looks dim (they have little headroom at 3.3 V),
+  lower their resistors to 22 Ω.
 - **GPIO20 and GPIO21** are the UART0 pins, but they are free because the
-  SuperMini logs over native USB.
+  SuperMini logs over native USB. The boot ROM still prints on GPIO21 at reset,
+  but with the anode floating the blue LED stays dark.
 - The firmware dims the LED with PWM (`bright`). Adjust the resistors if one
   colour dominates.
 
@@ -152,8 +158,8 @@ blue LED (GPIO8) blinks once per second as a heartbeat.
 | 1 | ESP32-C3 SuperMini |
 | 1 | FPC connector, 8 pin, 0.5 mm pitch (match the cable's contact side) |
 | 1 | JST-XH 2.54 mm 5-pin header + cable to EBB42 Endstop |
-| 1 | 5 mm RGB LED, common cathode |
-| 1 | 220 Ω, 2 × 47 Ω (LED) |
+| 1 | 5 mm RGB LED, common anode |
+| 1 | 220 Ω (red), 2 × 47 Ω (green, blue) |
 | (1) | Schottky diode SS14 / B5819W (optional, see D1) |
 
 That's the whole board: the SuperMini, two connectors and an LED with three
