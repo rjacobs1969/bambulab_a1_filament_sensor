@@ -63,7 +63,7 @@ struct ChannelCfg {
 struct Config {
   uint32_t magic;
   ChannelCfg ch[CH_COUNT];
-  uint16_t fault_mv;      // pull-up probe reading above this = sensor missing
+  uint16_t fault_mv;      // pull-up probe above this = out of range or missing
   uint8_t led_brightness; // 0..255
   // Tension indicator: the LED starts flashing yellow when the tangle reading
   // passes flash_mv, and the rate rises linearly from flash_min_hz to
@@ -317,7 +317,7 @@ static void printStatus() {
     Serial.printf("  %-8s %4u mV  %-8s line=%s  probe=%4u mV%s\n", CH_NAME[ch], s.mv,
                   s.active ? CH_ACTIVE_NAME[ch] : CH_IDLE_NAME[ch],
                   s.line_released ? "HIGH(released)" : "LOW", s.probe_mv,
-                  s.fault ? "  FAULT (sensor not connected?)" : "");
+                  s.fault ? "  FAULT (out of range or not connected)" : "");
   }
 }
 
@@ -341,7 +341,7 @@ static void printHelp() {
       "  set <ch> level high|low    line level while active\n"
       "  learn <ch> idle|active     capture the current reading (hold the state ~0.5 s)\n"
       "  learn <ch> apply           thresholds at 35%/65% between the captured points\n"
-      "  fault <mV>                 pull-up probe above this flags a missing sensor\n"
+      "  fault <mV>                 pull-up probe above this = out of range or not connected\n"
       "  bright <0-255>             RGB LED brightness\n"
       "  flash <mV> [min_hz max_hz] tangle level where yellow flashing starts, and its rate range\n"
       "  save | load | defaults     NVS storage (changes are live but not kept until save)");

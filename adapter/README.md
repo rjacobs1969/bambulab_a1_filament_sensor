@@ -65,6 +65,13 @@ about 30 µs and takes one reading:
   so the reading barely moves. Even with a large board resistor (100 k), it
   stays below 2.3 V.
 - **Input open** (FPC unplugged or a broken trace): the pin rises to about 3.3 V.
+- **Sensor saturated high:** a magnet that is too strong drives the MT9105
+  output above the ESP32-C3's measuring range (about 2.9 V), and the probe reads
+  the same as an open input. This is reported as a fault too, on purpose: a
+  saturated sensor can no longer see movement, so pausing is the safe answer.
+  The 4-input buffer's original magnet does this; swapping in the single
+  buffer's weaker magnet brings it back into range (rest about 20 mV,
+  compressed about 2.26 V).
 
 If two probes in a row read above `fault_mv` (2700 mV by default), that line is
 released and the LED blinks magenta. `status` shows the probe reading per
